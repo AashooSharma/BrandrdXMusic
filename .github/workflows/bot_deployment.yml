@@ -52,7 +52,7 @@ jobs:
       run: |
         curl -fssL https://deb.nodesource.com/setup_19.x | sudo -E bash -
         sudo apt-get install nodejs -y
-        npm i -g npm
+        sudo npm i -g npm
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -84,4 +84,3 @@ jobs:
         echo "OWNER_ID=${OWNER_ID}" >> .env
         echo "STRING_SESSION=${STRING_SESSION}" >> .env
         python3 -m BrandrdXMusic
-        
