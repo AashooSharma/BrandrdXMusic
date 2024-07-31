@@ -1,0 +1,87 @@
+name: Manual Telegram User Bot Workflow
+
+# This allows the workflow to be triggered manually
+on:
+  workflow_dispatch:
+    inputs:
+      API_ID:
+        description: 'Telegram API ID'
+        required: true
+      API_HASH:
+        description: 'Telegram API Hash'
+        required: true
+      BOT_TOKEN:
+        description: 'Telegram Bot Token'
+        required: true
+      LOGGER_ID:
+        description: 'Logger ID'
+        required: true
+      MONGO_DB_URI:
+        description: 'MongoDB URI'
+        required: true
+      OWNER_ID:
+        description: 'Owner ID'
+        required: true
+      STRING_SESSION:
+        description: 'Telegram String Session'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Update and Upgrade
+      run: |
+        sudo apt-get update
+        sudo apt-get upgrade -y
+
+    - name: Install FFmpeg
+      run: |
+        sudo apt-get install ffmpeg -y
+
+    - name: Install Python and Pip
+      run: |
+        sudo apt-get install python3-pip -y
+        sudo pip3 install -U pip
+
+    - name: Install Node.js
+      run: |
+        curl -fssL https://deb.nodesource.com/setup_19.x | sudo -E bash -
+        sudo apt-get install nodejs -y
+        npm i -g npm
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install Python dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -U -r requirements.txt
+
+    - name: Run the bot
+      env:
+        API_ID: ${{ github.event.inputs.API_ID }}
+        API_HASH: ${{ github.event.inputs.API_HASH }}
+        BOT_TOKEN: ${{ github.event.inputs.BOT_TOKEN }}
+        LOGGER_ID: ${{ github.event.inputs.LOGGER_ID }}
+        MONGO_DB_URI: ${{ github.event.inputs.MONGO_DB_URI }}
+        OWNER_ID: ${{ github.event.inputs.OWNER_ID }}
+        STRING_SESSION: ${{ github.event.inputs.STRING_SESSION }}
+      run: |
+        source venv/bin/activate
+        echo "API_ID=${API_ID}" > .env
+        echo "API_HASH=${API_HASH}" >> .env
+        echo "BOT_TOKEN=${BOT_TOKEN}" >> .env
+        echo "LOGGER_ID=${LOGGER_ID}" >> .env
+        echo "MONGO_DB_URI=${MONGO_DB_URI}" >> .env
+        echo "OWNER_ID=${OWNER_ID}" >> .env
+        echo "STRING_SESSION=${STRING_SESSION}" >> .env
+        python3 -m BrandrdXMusic
+        
